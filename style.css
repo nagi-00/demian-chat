@@ -365,8 +365,9 @@ html, body {
 [data-bubble="classic"] .bubble.right { border-radius: 16px 4px 16px 16px; }
 [data-bubble="square"] .bubble { border-radius: 2px; }
 
-.bubble.left  { color: var(--text-primary); }
-.bubble.right { color: white; }
+.bubble { color: var(--text-primary); font-family: inherit; }
+.bubble * { font-family: inherit; }
+.script-line, .script-line * { font-family: inherit; }
 
 /* Script line */
 .script-line {
@@ -576,6 +577,18 @@ html, body {
   width: 100%;
   accent-color: var(--theme-color);
 }
+.bg-color-presets { display: flex; gap: 8px; align-items: center; }
+.bg-preset-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, transform 0.1s;
+  box-shadow: 0 0 0 1px var(--border);
+}
+.bg-preset-btn:hover { transform: scale(1.15); }
+.bg-preset-btn.active { border-color: var(--theme-color); }
 
 /* ─── Sidebar list items ─── */
 .folder-header {

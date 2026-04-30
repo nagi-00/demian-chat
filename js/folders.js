@@ -29,7 +29,7 @@ export function initFolders(currentUid, onChatSelect) {
   sidebarTop.addEventListener('drop', (e) => {
     e.preventDefault();
     sidebarTop.classList.remove('drag-over');
-    const chatId = e.dataTransfer.getData('chatId');
+    const chatId = e.dataTransfer.getData('text/plain');
     if (chatId) update(ref(db, `users/${uid}/chats/${chatId}`), { folderId: null });
   });
 }
@@ -157,7 +157,7 @@ function createFolderHeader(folderId, folder) {
   el.addEventListener('drop', (e) => {
     e.preventDefault();
     el.classList.remove('drag-over');
-    const chatId = e.dataTransfer.getData('chatId');
+    const chatId = e.dataTransfer.getData('text/plain');
     if (chatId) update(ref(db, `users/${uid}/chats/${chatId}`), { folderId });
   });
   return el;
@@ -174,7 +174,7 @@ function createChatItem(id, chat, indented) {
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="8" r="1" fill="currentColor"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>
     </button>`;
   el.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('chatId', id);
+    e.dataTransfer.setData('text/plain', id);
     e.dataTransfer.effectAllowed = 'move';
     el.classList.add('dragging');
   });

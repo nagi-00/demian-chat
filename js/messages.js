@@ -91,7 +91,17 @@ function initInputHandlers() {
     }
   });
 
+  let isComposing = false;
+  input.addEventListener('compositionstart', () => { isComposing = true; });
+  input.addEventListener('compositionend', () => {
+    isComposing = false;
+    trySlashCommand();
+  });
   input.addEventListener('input', () => {
+    if (!isComposing) trySlashCommand();
+  });
+
+  function trySlashCommand() {
     if (currentMode !== 'message') return;
     const text = input.textContent;
     if (text.length >= 2 && text.startsWith('/')) {
@@ -106,7 +116,7 @@ function initInputHandlers() {
         input.focus();
       }
     }
-  });
+  }
 
   sendBtn.addEventListener('click', sendMessage);
 
@@ -272,7 +282,8 @@ function createMsgEl(msgId, msg) {
     bubble.style.background = color + '18';
     bubble.style.border = `0.5px solid ${color}33`;
   } else {
-    bubble.style.background = color;
+    bubble.style.background = color + '38';
+    bubble.style.border = `0.5px solid ${color}55`;
   }
   bubble.innerHTML = msg.content;
 

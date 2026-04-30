@@ -53,23 +53,31 @@ export function initPanelButtons(onOpenSpeakers) {
 }
 
 export function initSettingsPanel(applyColor, applyBubble, applySize, applyBg) {
-  const colorInput = document.getElementById('setting-theme-color');
-  const bgInput    = document.getElementById('setting-bg-color');
-  const fontSlider = document.getElementById('setting-font-size');
-  const fontLabel  = document.getElementById('font-size-label');
-  const styleBtns  = document.querySelectorAll('.bubble-style-btn');
+  const colorInput  = document.getElementById('setting-theme-color');
+  const fontSlider  = document.getElementById('setting-font-size');
+  const fontLabel   = document.getElementById('font-size-label');
+  const styleBtns   = document.querySelectorAll('.bubble-style-btn');
+  const bgPresets   = document.querySelectorAll('.bg-preset-btn');
   const cs = getComputedStyle(document.documentElement);
 
   colorInput.value = cs.getPropertyValue('--theme-color').trim();
-  bgInput.value    = cs.getPropertyValue('--bg-primary').trim();
   fontSlider.value = parseInt(cs.getPropertyValue('--font-size-base'), 10);
   fontLabel.textContent = fontSlider.value + 'px';
   styleBtns.forEach(btn => {
     if (btn.dataset.style === document.body.dataset.bubble) btn.classList.add('active');
   });
 
+  const currentBg = localStorage.getItem('bgColor') || '#F8F6F2';
+  bgPresets.forEach(btn => {
+    if (btn.dataset.color === currentBg) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      bgPresets.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyBg(btn.dataset.color);
+    });
+  });
+
   colorInput.addEventListener('input', (e) => applyColor(e.target.value));
-  bgInput.addEventListener('input', (e) => applyBg(e.target.value));
 
   styleBtns.forEach(btn => {
     btn.addEventListener('click', () => {
