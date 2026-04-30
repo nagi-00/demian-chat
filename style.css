@@ -339,10 +339,14 @@ html, body {
 }
 .msg-row.right .bubble-wrap { align-items: flex-end; }
 
-.speaker-name-label {
+.msg-time {
   font-size: 10px;
   color: var(--text-muted);
-  padding: 0 4px;
+  align-self: flex-end;
+  padding: 0 2px 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
 }
 
 .bubble {
@@ -648,16 +652,15 @@ html, body {
 .icon-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
 
 /* ─── Mockup mode ─── */
-body.mockup-mode .app-body {
-  justify-content: center;
-  background: color-mix(in srgb, var(--bg-primary) 30%, #555);
-}
-body.mockup-mode .sidebar { display: none; }
-body.mockup-mode .chat-area {
-  flex: none;
-  width: 390px;
+body.mockup-mode .chat-area { background: color-mix(in srgb, var(--bg-primary) 20%, #444); }
+body.mockup-mode .messages-area {
   max-width: 390px;
-  box-shadow: 0 0 40px rgba(0,0,0,0.35);
+  width: 390px;
+  margin: 16px auto;
+  border-radius: 20px;
+  box-shadow: 0 0 0 8px #1c1c1e, 0 8px 40px rgba(0,0,0,0.4);
+  overflow: hidden;
+  flex-shrink: 0;
 }
 #btn-mockup-toggle.active { color: var(--theme-color); background: var(--theme-light); }
 

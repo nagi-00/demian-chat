@@ -2,7 +2,7 @@ import { db } from './auth.js';
 import {
   ref, push, update, onValue, get
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getSpeaker, speakersCache, getSelectedSpeakerId } from './speakers.js';
+import { getSpeaker, speakersCache, getSelectedSpeakerId, setSelectedSpeakerId, renderSpeakerPills } from './speakers.js';
 
 let uid = null;
 let currentChatId = null;
@@ -81,6 +81,23 @@ function initInputHandlers() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+    }
+  });
+
+  input.addEventListener('input', () => {
+    if (currentMode !== 'message') return;
+    const text = input.textContent;
+    if (text.length >= 2 && text.startsWith('/')) {
+      const query = text.slice(1).toLowerCase();
+      const match = Object.entries(speakersCache).find(([, sp]) =>
+        sp.name.toLowerCase().startsWith(query)
+      );
+      if (match) {
+        setSelectedSpeakerId(match[0]);
+        renderSpeakerPills(speakersCache);
+        input.innerHTML = '';
+        input.focus();
+      }
     }
   });
 
@@ -206,7 +223,7 @@ function createMsgEl(msgId, msg) {
   const speaker = msg.speakerId ? getSpeaker(msg.speakerId) : null;
   const name  = speaker ? speaker.name  : '알 수 없음';
   const color = speaker ? speaker.color : '#888888';
-  const side  = msg.side || 'left';
+  const side  = (speaker ? speaker.defaultSide : null) || msg.side || 'left';
 
   const row = document.createElement('div');
   row.className = `msg-row ${side}`;
@@ -219,10 +236,6 @@ function createMsgEl(msgId, msg) {
 
   const wrap = document.createElement('div');
   wrap.className = 'bubble-wrap';
-
-  const nameLabel = document.createElement('div');
-  nameLabel.className = 'speaker-name-label';
-  nameLabel.textContent = name;
 
   const bubble = document.createElement('div');
   bubble.className = `bubble ${side}`;
@@ -240,9 +253,20 @@ function createMsgEl(msgId, msg) {
   });
   attachInlineEdit(bubble, msgId, false);
 
-  wrap.appendChild(nameLabel);
+  const timeLabel = document.createElement('div');
+  timeLabel.className = 'msg-time';
+  if (msg.timestamp) {
+    timeLabel.textContent = new Date(msg.timestamp).toLocaleTimeString('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
   wrap.appendChild(bubble);
   row.appendChild(avatar);
   row.appendChild(wrap);
+  row.appendChild(timeLabel);
   return row;
 }

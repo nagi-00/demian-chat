@@ -37,6 +37,9 @@ export function getSpeaker(speakerId) {
 
 let selectedSpeakerId = null;
 export function getSelectedSpeakerId() { return selectedSpeakerId; }
+export function setSelectedSpeakerId(id) {
+  selectedSpeakerId = id;
+}
 
 export function renderSpeakerPills(speakers) {
   const container = document.getElementById('speaker-pills');
