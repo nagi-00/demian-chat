@@ -71,7 +71,7 @@ html, body {
   overflow: hidden;
   transition: transform 0.22s ease;
 }
-.sidebar.hidden { transform: translateX(-100%); }
+.sidebar.hidden { transform: translateX(-100%); width: 0; }
 
 @media (max-width: 640px) {
   .sidebar {
