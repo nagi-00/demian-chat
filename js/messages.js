@@ -1,7 +1,8 @@
 import { db } from './auth.js';
 import {
-  ref, push, update, onValue, get
+  ref, push, update, remove, onValue, get
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { showConfirm } from './ui.js';
 import { getSpeaker, speakersCache, getSelectedSpeakerId, setSelectedSpeakerId, renderSpeakerPills } from './speakers.js';
 
 let uid = null;
@@ -209,7 +210,17 @@ function attachInlineEdit(el, msgId, isScript) {
       el.removeEventListener('blur', onBlur);
       if (cancel) { el.innerHTML = prev; return; }
       const newContent = el.innerHTML.trim();
-      if (newContent && newContent !== prev) {
+      if (!newContent || newContent === '<br>') {
+        const ok = await showConfirm('메시지 삭제', '내용이 비어 있어요. 이 메시지를 삭제할까요?');
+        if (ok) {
+          await remove(ref(db, `users/${uid}/chats/${currentChatId}/messages/${msgId}`));
+        } else {
+          el.innerHTML = prev;
+          el.contentEditable = 'false';
+        }
+        return;
+      }
+      if (newContent !== prev) {
         await update(ref(db, `users/${uid}/chats/${currentChatId}/messages/${msgId}`), { content: newContent });
       } else {
         el.innerHTML = prev;

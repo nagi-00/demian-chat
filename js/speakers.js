@@ -88,12 +88,17 @@ export function renderSpeakersList(speakers, onEdit, onDelete) {
       <div class="speaker-avatar" style="background:${sp.color}">${sp.name.slice(0, 2)}</div>
       <div class="speaker-info">
         <div class="speaker-name">${sp.name}</div>
-        <div class="speaker-meta">${sp.defaultSide === 'left' ? '왼쪽' : '오른쪽'}</div>
+        <button class="speaker-side-toggle">${sp.defaultSide === 'right' ? '오른쪽' : '왼쪽'}</button>
       </div>
       <div class="speaker-actions">
         <button class="text-btn edit-btn">편집</button>
         <button class="text-btn danger delete-btn">삭제</button>
       </div>`;
+
+    item.querySelector('.speaker-side-toggle').addEventListener('click', () => {
+      const newSide = sp.defaultSide === 'right' ? 'left' : 'right';
+      onEdit(id, { defaultSide: newSide });
+    });
 
     item.querySelector('.edit-btn').addEventListener('click', () => {
       if (item.classList.contains('editing')) return;

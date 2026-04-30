@@ -22,6 +22,16 @@ export function initFolders(currentUid, onChatSelect) {
     chatsCache = snap.val() || {};
     renderSidebar();
   });
+
+  const sidebarTop = document.querySelector('.sidebar-top');
+  sidebarTop.addEventListener('dragover', (e) => { e.preventDefault(); sidebarTop.classList.add('drag-over'); });
+  sidebarTop.addEventListener('dragleave', () => sidebarTop.classList.remove('drag-over'));
+  sidebarTop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    sidebarTop.classList.remove('drag-over');
+    const chatId = e.dataTransfer.getData('chatId');
+    if (chatId) update(ref(db, `users/${uid}/chats/${chatId}`), { folderId: null });
+  });
 }
 
 export async function createChat(folderId = null) {
@@ -140,18 +150,35 @@ function createFolderHeader(folderId, folder) {
       { label: '삭제', danger: true, action: () => deleteFolder(folderId) }
     ]);
   });
+  el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', (e) => {
+    if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over');
+  });
+  el.addEventListener('drop', (e) => {
+    e.preventDefault();
+    el.classList.remove('drag-over');
+    const chatId = e.dataTransfer.getData('chatId');
+    if (chatId) update(ref(db, `users/${uid}/chats/${chatId}`), { folderId });
+  });
   return el;
 }
 
 function createChatItem(id, chat, indented) {
   const el = document.createElement('div');
   el.className = 'chat-item' + (indented ? ' indented' : '') + (id === currentChatId ? ' active' : '');
+  el.draggable = true;
   el.innerHTML = `
     <span class="chat-dot"></span>
     <span class="chat-title">${chat.title || '새 채팅'}</span>
     <button class="more-btn">
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="8" r="1" fill="currentColor"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>
     </button>`;
+  el.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('chatId', id);
+    e.dataTransfer.effectAllowed = 'move';
+    el.classList.add('dragging');
+  });
+  el.addEventListener('dragend', () => el.classList.remove('dragging'));
   el.addEventListener('click', (e) => {
     if (e.target.closest('.more-btn')) return;
     selectChat(id);
