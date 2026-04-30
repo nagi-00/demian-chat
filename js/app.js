@@ -5,6 +5,7 @@ import {
   initSpeakers, addSpeaker, updateSpeaker, deleteSpeaker,
   renderSpeakerPills, renderSpeakersList, speakersCache
 } from './speakers.js';
+import { initFolders, createChat, createFolder } from './folders.js';
 
 loadSettings();
 initSidebarToggle();
@@ -17,6 +18,14 @@ initAuth((uid) => {
 
   initPanelButtons(() => renderSpeakersList(speakersCache, handleEditSpeaker, handleDeleteSpeaker));
   initSettingsPanel(applyThemeColor, applyBubbleStyle, applyFontSize);
+
+  initFolders(uid, (chatId) => {
+    console.log('Chat selected:', chatId);
+    // messages.js will be connected in Task 9
+  });
+
+  document.getElementById('btn-new-chat').addEventListener('click', () => createChat());
+  document.getElementById('btn-new-folder').addEventListener('click', () => createFolder());
 
   document.getElementById('btn-add-speaker').addEventListener('click', () => {
     const name  = document.getElementById('new-speaker-name').value;
