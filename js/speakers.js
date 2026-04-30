@@ -103,12 +103,17 @@ export function renderSpeakersList(speakers, onEdit, onDelete) {
       nameInput.type   = 'text';
       nameInput.value  = sp.name;
       nameInput.className = 'text-input';
-      nameInput.style.width = '80px';
+      nameInput.style.width = '70px';
 
       const colorInput = document.createElement('input');
       colorInput.type  = 'color';
       colorInput.value = sp.color;
       colorInput.className = 'color-input';
+
+      const sideSelect = document.createElement('select');
+      sideSelect.className = 'select-input';
+      sideSelect.style.cssText = 'height:26px;font-size:11px;padding:0 4px';
+      sideSelect.innerHTML = `<option value="left"${sp.defaultSide === 'left' ? ' selected' : ''}>왼</option><option value="right"${sp.defaultSide === 'right' ? ' selected' : ''}>오</option>`;
 
       const saveBtn = document.createElement('button');
       saveBtn.className = 'accent-btn';
@@ -116,10 +121,10 @@ export function renderSpeakersList(speakers, onEdit, onDelete) {
       saveBtn.style.cssText = 'height:26px;padding:0 10px;font-size:11.5px';
 
       infoDiv.replaceChildren(nameInput, colorInput);
-      actionsDiv.replaceChildren(saveBtn);
+      actionsDiv.replaceChildren(sideSelect, saveBtn);
 
       saveBtn.addEventListener('click', () => {
-        onEdit(id, { name: nameInput.value, color: colorInput.value });
+        onEdit(id, { name: nameInput.value, color: colorInput.value, defaultSide: sideSelect.value });
       });
     });
 

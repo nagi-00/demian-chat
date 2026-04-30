@@ -16,8 +16,8 @@
   --sidebar-width: 200px;
 
   --bg-primary:   #F8F6F2;
-  --bg-secondary: #EEEAE3;
-  --bg-sidebar:   #F2EFE9;
+  --bg-secondary: color-mix(in srgb, var(--bg-primary) 75%, #A0988A);
+  --bg-sidebar:   color-mix(in srgb, var(--bg-primary) 88%, #A0988A);
   --border:       #D6D0C8;
   --text-primary:   #2C2825;
   --text-secondary: #8C8680;
@@ -646,6 +646,28 @@ html, body {
   transition: background 0.15s, color 0.15s;
 }
 .icon-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+
+/* ─── Mockup mode ─── */
+body.mockup-mode .app-body {
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg-primary) 30%, #555);
+}
+body.mockup-mode .sidebar { display: none; }
+body.mockup-mode .chat-area {
+  flex: none;
+  width: 390px;
+  max-width: 390px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.35);
+}
+#btn-mockup-toggle.active { color: var(--theme-color); background: var(--theme-light); }
+
+/* ─── Inline message edit ─── */
+.bubble[contenteditable="true"],
+.script-line[contenteditable="true"] {
+  outline: 1.5px solid var(--theme-color);
+  cursor: text !important;
+  border-radius: 8px;
+}
 
 /* ─── Confirm dialog ─── */
 .dialog-backdrop {

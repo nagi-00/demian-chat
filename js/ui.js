@@ -46,23 +46,24 @@ export function initPanelButtons(onOpenSpeakers) {
   });
 }
 
-export function initSettingsPanel(applyColor, applyBubble, applySize) {
+export function initSettingsPanel(applyColor, applyBubble, applySize, applyBg) {
   const colorInput = document.getElementById('setting-theme-color');
+  const bgInput    = document.getElementById('setting-bg-color');
   const fontSlider = document.getElementById('setting-font-size');
   const fontLabel  = document.getElementById('font-size-label');
   const styleBtns  = document.querySelectorAll('.bubble-style-btn');
+  const cs = getComputedStyle(document.documentElement);
 
-  colorInput.value = getComputedStyle(document.documentElement)
-    .getPropertyValue('--theme-color').trim();
-  fontSlider.value = parseInt(
-    getComputedStyle(document.documentElement).getPropertyValue('--font-size-base'), 10
-  );
+  colorInput.value = cs.getPropertyValue('--theme-color').trim();
+  bgInput.value    = cs.getPropertyValue('--bg-primary').trim();
+  fontSlider.value = parseInt(cs.getPropertyValue('--font-size-base'), 10);
   fontLabel.textContent = fontSlider.value + 'px';
   styleBtns.forEach(btn => {
     if (btn.dataset.style === document.body.dataset.bubble) btn.classList.add('active');
   });
 
   colorInput.addEventListener('input', (e) => applyColor(e.target.value));
+  bgInput.addEventListener('input', (e) => applyBg(e.target.value));
 
   styleBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -76,6 +77,19 @@ export function initSettingsPanel(applyColor, applyBubble, applySize) {
     const size = parseInt(e.target.value, 10);
     fontLabel.textContent = size + 'px';
     applySize(size);
+  });
+}
+
+export function initMockupToggle() {
+  const btn = document.getElementById('btn-mockup-toggle');
+  if (localStorage.getItem('mockupMode') === '1') {
+    document.body.classList.add('mockup-mode');
+    btn.classList.add('active');
+  }
+  btn.addEventListener('click', () => {
+    const on = document.body.classList.toggle('mockup-mode');
+    btn.classList.toggle('active', on);
+    localStorage.setItem('mockupMode', on ? '1' : '0');
   });
 }
 

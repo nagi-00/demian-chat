@@ -1,6 +1,6 @@
 import { initAuth } from './auth.js';
-import { loadSettings, applyThemeColor, applyBubbleStyle, applyFontSize } from './settings.js';
-import { initSidebarToggle, initPanelButtons, initSettingsPanel, showConfirm } from './ui.js';
+import { loadSettings, applyThemeColor, applyBubbleStyle, applyFontSize, applyBgColor } from './settings.js';
+import { initSidebarToggle, initPanelButtons, initSettingsPanel, initMockupToggle, showConfirm } from './ui.js';
 import {
   initSpeakers, addSpeaker, updateSpeaker, deleteSpeaker,
   renderSpeakerPills, renderSpeakersList, speakersCache
@@ -10,6 +10,7 @@ import { initMessages, setCurrentChat, initDropHandler } from './messages.js';
 
 loadSettings();
 initSidebarToggle();
+initMockupToggle();
 
 initAuth((uid) => {
   initSpeakers(uid, (speakers) => {
@@ -18,7 +19,7 @@ initAuth((uid) => {
   });
 
   initPanelButtons(() => renderSpeakersList(speakersCache, handleEditSpeaker, handleDeleteSpeaker));
-  initSettingsPanel(applyThemeColor, applyBubbleStyle, applyFontSize);
+  initSettingsPanel(applyThemeColor, applyBubbleStyle, applyFontSize, applyBgColor);
 
   initMessages(uid);
   initDropHandler();
@@ -30,11 +31,13 @@ initAuth((uid) => {
   document.getElementById('btn-new-folder').addEventListener('click', () => createFolder());
 
   document.getElementById('btn-add-speaker').addEventListener('click', () => {
-    const name  = document.getElementById('new-speaker-name').value;
-    const color = document.getElementById('new-speaker-color').value;
-    const side  = document.getElementById('new-speaker-side').value;
+    const name    = document.getElementById('new-speaker-name').value;
+    const color   = document.getElementById('new-speaker-color').value;
+    const sideEl  = document.getElementById('new-speaker-side');
+    const side    = sideEl.value;
     addSpeaker(name, color, side);
     document.getElementById('new-speaker-name').value = '';
+    sideEl.value = side === 'left' ? 'right' : 'left';
   });
 });
 

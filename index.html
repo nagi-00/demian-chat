@@ -19,6 +19,12 @@
       <span class="header-title">demian chat</span>
     </div>
     <div class="header-icons">
+      <button class="icon-btn" id="btn-mockup-toggle" aria-label="모바일 뷰">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="1" width="8" height="14" rx="1.5"/>
+          <circle cx="8" cy="12.5" r="0.75" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
       <button class="icon-btn" id="btn-speakers-panel" aria-label="화자 관리">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="6" cy="5" r="2.5"/><path d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4"/>
@@ -133,6 +139,10 @@
         </button>
       </div>
       <div class="panel-body">
+        <div class="settings-row">
+          <label class="settings-label">배경 컬러</label>
+          <input type="color" id="setting-bg-color" class="color-input">
+        </div>
         <div class="settings-row">
           <label class="settings-label">테마 컬러</label>
           <input type="color" id="setting-theme-color" class="color-input">

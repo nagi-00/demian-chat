@@ -107,8 +107,12 @@ async function sendMessage() {
   const order = Date.now();
   const msgRef = ref(db, `users/${uid}/chats/${currentChatId}/messages`);
 
-  if (currentMode === 'script') {
-    await push(msgRef, { type: 'script', speakerId: null, side: null, content, timestamp: order, order });
+  const plainText = content.replace(/<[^>]+>/g, '').trim();
+  const backtickMatch = plainText.match(/^`([\s\S]+)`$/);
+
+  if (currentMode === 'script' || backtickMatch) {
+    const scriptContent = backtickMatch ? backtickMatch[1] : content;
+    await push(msgRef, { type: 'script', speakerId: null, side: null, content: scriptContent, timestamp: order, order });
   } else {
     const speakerId = getSelectedSpeakerId();
     if (!speakerId) { alert('화자를 선택해줘'); return; }
@@ -127,8 +131,8 @@ async function sendMessage() {
   const snap = await get(ref(db, `users/${uid}/chats/${currentChatId}/messages`));
   const count = snap.size !== undefined ? snap.size : Object.keys(snap.val() || {}).length;
   if (count <= 1) {
-    const plainText = content.replace(/<[^>]+>/g, '').slice(0, 20) || '새 채팅';
-    await update(ref(db, `users/${uid}/chats/${currentChatId}`), { title: plainText });
+    const titleText = content.replace(/<[^>]+>/g, '').slice(0, 20) || '새 채팅';
+    await update(ref(db, `users/${uid}/chats/${currentChatId}`), { title: titleText });
   }
 
   input.innerHTML = '';
@@ -149,12 +153,53 @@ function renderMessages(msgs) {
   area.scrollTop = area.scrollHeight;
 }
 
+function attachInlineEdit(el, msgId, isScript) {
+  el.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    if (el.contentEditable === 'true') return;
+    const prev = el.innerHTML;
+    el.contentEditable = 'true';
+    if (!isScript) { el.draggable = false; }
+    el.focus();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    const finish = async (cancel) => {
+      el.contentEditable = 'false';
+      if (!isScript) { el.draggable = true; }
+      el.removeEventListener('keydown', onKey);
+      el.removeEventListener('blur', onBlur);
+      if (cancel) { el.innerHTML = prev; return; }
+      const newContent = el.innerHTML.trim();
+      if (newContent && newContent !== prev) {
+        await update(ref(db, `users/${uid}/chats/${currentChatId}/messages/${msgId}`), { content: newContent });
+      } else {
+        el.innerHTML = prev;
+      }
+    };
+
+    const onKey = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(false); }
+      if (e.key === 'Escape') { finish(true); }
+    };
+    const onBlur = () => finish(false);
+
+    el.addEventListener('keydown', onKey);
+    el.addEventListener('blur', onBlur);
+  });
+}
+
 function createMsgEl(msgId, msg) {
   if (msg.type === 'script') {
     const el = document.createElement('div');
     el.className = 'script-line';
     el.dataset.msgId = msgId;
     el.innerHTML = msg.content;
+    attachInlineEdit(el, msgId, true);
     return el;
   }
 
@@ -193,6 +238,7 @@ function createMsgEl(msgId, msg) {
   bubble.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData('text/plain', msgId);
   });
+  attachInlineEdit(bubble, msgId, false);
 
   wrap.appendChild(nameLabel);
   wrap.appendChild(bubble);
