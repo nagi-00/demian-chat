@@ -652,7 +652,6 @@ html, body {
 .icon-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
 
 /* ─── Mockup mode ─── */
-body.mockup-mode .chat-area { background: color-mix(in srgb, var(--bg-primary) 20%, #444); }
 body.mockup-mode .messages-area {
   max-width: 390px;
   width: 390px;
