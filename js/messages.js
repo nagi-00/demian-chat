@@ -8,7 +8,12 @@ let uid = null;
 let currentChatId = null;
 let currentMode = 'message';
 let messagesUnsub = null;
+let lastMsgsData = {};
 export const undoStack = [];
+
+export function rerenderMessages() {
+  if (currentChatId) renderMessages(lastMsgsData);
+}
 
 export function initMessages(currentUid) {
   uid = currentUid;
@@ -26,7 +31,8 @@ export function setCurrentChat(chatId) {
   }
   const msgRef = ref(db, `users/${uid}/chats/${chatId}/messages`);
   messagesUnsub = onValue(msgRef, (snap) => {
-    renderMessages(snap.val() || {});
+    lastMsgsData = snap.val() || {};
+    renderMessages(lastMsgsData);
   });
 }
 
@@ -111,6 +117,17 @@ function initInputHandlers() {
         speakerId: top.prevSpeakerId,
         side: top.prevSide
       });
+      return;
+    }
+    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      const active = document.activeElement;
+      const panelOpen = document.querySelector('.panel-overlay.open');
+      if (!panelOpen && active !== input && !active.isContentEditable
+          && active.tagName !== 'INPUT' && active.tagName !== 'SELECT'
+          && active.tagName !== 'TEXTAREA' && currentChatId) {
+        e.preventDefault();
+        input.focus();
+      }
     }
   });
 }

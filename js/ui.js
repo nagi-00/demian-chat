@@ -44,6 +44,12 @@ export function initPanelButtons(onOpenSpeakers) {
     openPanel('speakers-panel');
     if (onOpenSpeakers) onOpenSpeakers();
   });
+
+  document.querySelectorAll('.panel-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
 }
 
 export function initSettingsPanel(applyColor, applyBubble, applySize, applyBg) {

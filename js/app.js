@@ -6,7 +6,7 @@ import {
   renderSpeakerPills, renderSpeakersList, speakersCache
 } from './speakers.js';
 import { initFolders, createChat, createFolder } from './folders.js';
-import { initMessages, setCurrentChat, initDropHandler } from './messages.js';
+import { initMessages, setCurrentChat, initDropHandler, rerenderMessages } from './messages.js';
 
 loadSettings();
 initSidebarToggle();
@@ -16,6 +16,7 @@ initAuth((uid) => {
   initSpeakers(uid, (speakers) => {
     renderSpeakerPills(speakers);
     renderSpeakersList(speakers, handleEditSpeaker, handleDeleteSpeaker);
+    rerenderMessages();
   });
 
   initPanelButtons(() => renderSpeakersList(speakersCache, handleEditSpeaker, handleDeleteSpeaker));
