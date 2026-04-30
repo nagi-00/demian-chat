@@ -6,6 +6,7 @@ import {
   renderSpeakerPills, renderSpeakersList, speakersCache
 } from './speakers.js';
 import { initFolders, createChat, createFolder } from './folders.js';
+import { initMessages, setCurrentChat, initDropHandler } from './messages.js';
 
 loadSettings();
 initSidebarToggle();
@@ -19,9 +20,10 @@ initAuth((uid) => {
   initPanelButtons(() => renderSpeakersList(speakersCache, handleEditSpeaker, handleDeleteSpeaker));
   initSettingsPanel(applyThemeColor, applyBubbleStyle, applyFontSize);
 
+  initMessages(uid);
+  initDropHandler();
   initFolders(uid, (chatId) => {
-    console.log('Chat selected:', chatId);
-    // messages.js will be connected in Task 9
+    setCurrentChat(chatId);
   });
 
   document.getElementById('btn-new-chat').addEventListener('click', () => createChat());
